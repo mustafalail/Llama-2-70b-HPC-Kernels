@@ -1,7 +1,7 @@
 ! OpenMP
 
-! Give me code for the following:
-! Fortran, OpenMP, AXPY, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP, AXPY, subroutine"
 
 Program Example
   Implicit none
@@ -43,8 +43,8 @@ end program example
 
 ! OpenMP (offload)
 
-! Give me code for the following:
-! Fortran, OpenMP (offload), AXPY, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP (offload), AXPY, subroutine"
 
 Program Example
   Implicit none
@@ -89,8 +89,8 @@ end program example
 
 ! OpenACC
 
-! Give me code for the following:
-! Fortran, OpenACC, AXPY, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenACC, AXPY, subroutine"
 
 Program Example
   Implicit none
