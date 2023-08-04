@@ -44,8 +44,8 @@ int main() {
 
 // OpenMP (offload)
 
-// Give me code for the following:
-// C++, OpenMP (offload), AXPY, function
+// Prompt: "Give me code for the following:
+// C++, OpenMP (offload), AXPY, function"
 
 #include <iostream>
 #include <omp.h>
@@ -93,8 +93,8 @@ int main() {
 
 // HIP (Heterogeneous-Compute Interface for Portability)
 
-// Give me code for the following:
-// C++, Heterogeneous-Compute Interface for Portability, AXPY, function
+// Prompt: "Give me code for the following:
+// C++, Heterogeneous-Compute Interface for Portability, AXPY, function"
 
 #include <hip/hip_runtime.h>
 #include <iostream>
@@ -165,8 +165,8 @@ int main() {
 
 // OpenACC
 
-// Give me code for the following:
-// C++, OpenACC, AXPY, function
+// Prompt: "Give me code for the following:
+// C++, OpenACC, AXPY, function"
 
 #include <openacc.h>
 #include <iostream>
@@ -235,8 +235,8 @@ int main() {
 
 // CUDA
 
-// Give me code for the following:
-// C++, OpenACC, CUDA, function
+// Prompt: "Give me code for the following:
+// C++, CUDA, AXPY, function"
 
 #include <cuda_runtime.h>
 
