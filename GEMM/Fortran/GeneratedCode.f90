@@ -1,7 +1,7 @@
 ! OpenMP
 
-! Give me code for the following:
-! Fortran, OpenMP, General matrix-matrix multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP, General matrix-matrix multiply, subroutine"
 
 Program MatrixMultiply
   Use ISO_C_BINDING
@@ -62,8 +62,8 @@ end program MatrixMultiply
 
 ! OpenMP (offload)
 
-! Give me code for the following:
-! Fortran, OpenMP (offload), General matrix-matrix multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP (offload), General matrix-matrix multiply, subroutine"
 
 Program MatrixMultiply
   Use ISO_C_BINDING
@@ -129,8 +129,8 @@ end program MatrixMultiply
 
 ! OpenACC
 
-! Give me code for the following:
-! Fortran, OpenACC, General matrix-matrix multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenACC, General matrix-matrix multiply, subroutine"
 
 program main
   use, intrinsic :: iso_c_binding
