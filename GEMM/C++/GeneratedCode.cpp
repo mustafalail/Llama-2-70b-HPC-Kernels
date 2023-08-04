@@ -1,7 +1,7 @@
 // OpenMP
 
-// Give me code for the following:
-// C++, OpenMP, general matrix-matrix multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenMP, general matrix-matrix multiply, function"
 
 
 #include <iostream>
@@ -32,8 +32,8 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
 
 // OpenMP (offload)
 
-// Give me code for the following:
-// C++, OpenMP (offload), general matrix-matrix multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenMP (offload), general matrix-matrix multiply, function"
 
 #include <iostream>
 #include <omp.h>
@@ -99,8 +99,8 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
 
 // HIP (Heterogeneous-Compute Interface for Portability)
 
-// Give me code for the following:
-// C++, Heterogeneous-Compute Interface for Portability, general matrix-matrix multiply, function
+// Prompt: "Give me code for the following:
+// C++, Heterogeneous-Compute Interface for Portability, general matrix-matrix multiply, function"
 
 #include <hip/hip_runtime.h>
 #include <iostream>
@@ -184,8 +184,8 @@ int main() {
 
 // OpenACC
 
-// Give me code for the following:
-// C++, OpenACC, general matrix-matrix multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenACC, general matrix-matrix multiply, function"
 
 #include <iostream>
 #include <cmath>
@@ -293,8 +293,8 @@ int main() {
 
 // CUDA
 
-// Give me code for the following:
-// C++, CUDA, general matrix-matrix multiply, function
+// Prompt: "Give me code for the following:
+// C++, CUDA, general matrix-matrix multiply, function"
 
 #include <iostream>
 #include <cuda_runtime.h>
