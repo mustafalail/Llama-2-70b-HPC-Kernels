@@ -1,7 +1,7 @@
 // OpenMP
 
-// Give me code for the following:
-// C++, OpenMP, general matrix-vector multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenMP, general matrix-vector multiply, function"
 
 #include <iostream>
 #include <omp.h>
@@ -45,8 +45,8 @@ void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) 
 
 // OpenMP (offload)
 
-// Give me code for the following:
-// C++, OpenMP (offload), general matrix-vector multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenMP (offload), general matrix-vector multiply, function"
 
 #include <iostream>
 #include <omp.h>
@@ -133,8 +133,8 @@ int main() {
 
 // HIP (Heterogeneous-Compute Interface for Portability)
 
-// Give me code for the following:
-// C++, Heterogeneous-Compute Interface for Portability, general matrix-vector multiply, function
+// Prompt: "Give me code for the following:
+// C++, Heterogeneous-Compute Interface for Portability, general matrix-vector multiply, function"
 
 
 #include <hip/hip_runtime.h>
@@ -198,8 +198,8 @@ int main() {
 
 // OpenACC
 
-// Give me code for the following:
-// C++, OpenACC, general matrix-vector multiply, function
+// Prompt: "Give me code for the following:
+// C++, OpenACC, general matrix-vector multiply, function"
 
 #include <iostream>
 #include <openacc.h>
@@ -259,8 +259,8 @@ int main() {
 
 // CUDA
 
-// Give me code for the following:
-// C++, CUDA, general matrix-vector multiply, function
+// Prompt: "Give me code for the following:
+// C++, CUDA, general matrix-vector multiply, function"
 
 #include <cuda_runtime.h>
 
