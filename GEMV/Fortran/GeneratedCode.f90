@@ -1,7 +1,7 @@
 ! OpenMP
 
-! Give me code for the following:
-! Fortran, OpenMP, General matrix-vector multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP, General matrix-vector multiply, subroutine"
 
 Program MatrixVectorMultiply
   Use, Intrinsic :: ISO_C_BINDING, Only : C_INT
@@ -46,8 +46,8 @@ end program MatrixVectorMultiply
 
 ! OpenMP (offload)
 
-! Give me code for the following:
-! Fortran, OpenMP (offload), General matrix-vector multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenMP (offload), General matrix-vector multiply, subroutine"
 
 Program MatrixVectorMultiply
   Use, Intrinsic :: ISO_C_BINDING, Only : C_INT
@@ -106,8 +106,8 @@ end program MatrixVectorMultiply
 
 ! OpenACC
 
-! Give me code for the following:
-! Fortran, OpenACC, General matrix-vector multiply, subroutine
+! Prompt: "Give me code for the following:
+! Fortran, OpenACC, General matrix-vector multiply, subroutine"
 
 Program MatrixVectorMultiply
   Use, Intrinsic :: ISO_C_BINDING, Only : C_INT
