@@ -3,6 +3,7 @@
 // Prompt: "Give me code for the following:
 // C++, OpenMP, general matrix-matrix multiply, function"
 
+// VERSION 1 //
 
 #include <iostream>
 #include <omp.h>
@@ -28,12 +29,106 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
     }
 }
 
+
+// VERSION 2 //
+
+#include <iostream>
+#include <omp.h>
+
+const int N = 10; // size of the matrices
+
+void matrixMultiply(float *A, float *B, float *C) {
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C)
+  {
+    float *C_local = C;
+    #pragma omp for schedule(static)
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        float sum = 0;
+        #pragma omp parallel for shared(sum)
+        for (int k = 0; k < N; ++k) {
+          sum += A[i * N + k] * B[k * N + j];
+        }
+        C_local[i * N + j] = sum;
+      }
+    }
+  }
+}
+
+int main() {
+  float A[N][N] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  float B[N][N] = {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+  float C[N][N];
+
+  matrixMultiply(A, B, C);
+
+  for (int i = 0; i < N; ++i) {
+    for (int j = 0; j < N; ++j) {
+      std::cout << C[i * N + j] << " ";
+    }
+    std::cout << endl;
+  }
+
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <omp.h>
+
+const int N = 10; // size of the matrices
+
+void matrixMultiply(float *A, float *B, float *C) {
+  #pragma omp parallel num_threads(4) default(none) private(C)
+  {
+    float *C_local = new float[N * N];
+    #pragma omp for schedule(static)
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        float sum = 0;
+        #pragma omp parallel for shared(sum)
+        for (int k = 0; k < N; ++k) {
+          sum += A[i * N + k] * B[k * N + j];
+        }
+        C_local[i * N + j] = sum;
+      }
+    }
+    #pragma omp barrier
+    std::copy(C_local, C_local + N * N, C, N * N);
+    delete[] C_local;
+  }
+}
+
+int main() {
+  float A[N][N] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  float B[N][N] = {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+  float C[N][N];
+
+  matrixMultiply(A, B, C);
+
+  for (int i = 0; i < N; ++i) {
+    for (int j = 0; j < N; ++j) {
+      std::cout << C[i * N + j] << " ";
+    }
+    std::cout << endl;
+  }
+
+  return 0;
+}
+
+
+
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // OpenMP (offload)
 
 // Prompt: "Give me code for the following:
 // C++, OpenMP (offload), general matrix-matrix multiply, function"
+
+// VERSION 1 //
 
 #include <iostream>
 #include <omp.h>
@@ -93,6 +188,96 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
+
+
+// VERSION 2 //
+
+#include <iostream>
+#include <omp.h>
+
+const int N = 10; // size of the matrices
+
+void matrixMultiply(float *A, float *B, float *C) {
+  #pragma omp declare mapper(A, B, C)
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C)
+  {
+    float *C_local = C;
+    #pragma omp for schedule(static)
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        float sum = 0;
+        #pragma omp parallel for shared(sum)
+        for (int k = 0; k < N; ++k) {
+          sum += A[i * N + k] * B[k * N + j];
+        }
+        C_local[i * N + j] = sum;
+      }
+    }
+  }
+}
+
+int main() {
+  float A[N][N] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  float B[N][N] = {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+  float C[N][N];
+
+  matrixMultiply(A, B, C);
+
+  for (int i = 0; i < N; ++i) {
+    for (int j = 0; j < N; ++j) {
+      std::cout << C[i * N + j] << " ";
+    }
+    std::cout << endl;
+  }
+
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <omp.h>
+
+const int N = 10; // size of the matrices
+
+void matrixMultiply(float *A, float *B, float *C) {
+  #pragma omp declare mapper(A, B, C)
+  #pragma omp parallel num_threads(4) default(none) private(C)
+  {
+    float *C_local = new float[N * N];
+    #pragma omp for schedule(static)
+    for (int i = 0; i < N; ++i) {
+      for (int j = 0; j < N; ++j) {
+        float sum = 0;
+        #pragma omp parallel for shared(sum)
+        for (int k = 0; k < N; ++k) {
+          sum += A[i * N + k] * B[k * N + j];
+        }
+        C_local[i * N + j] = sum;
+      }
+    }
+    #pragma omp barrier
+    std::copy(C_local, C_local + N * N, C, N * N);
+    delete[] C_local;
+  }
+}
+
+int main() {
+  float A[N][N] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  float B[N][N] = {{10, 11, 12}, {13, 14, 15}, {16, 17, 18}};
+  float C[N][N];
+
+  matrixMultiply(A, B, C);
+
+  for (int i = 0; i < N; ++i) {
+    for (int j = 0; j < N; ++j) {
+      std::cout << C[i * N + j] << " ";
+    }
+    std::cout << endl;
+  }
+
+  return 0;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -101,6 +286,8 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
 
 // Prompt: "Give me code for the following:
 // C++, Heterogeneous-Compute Interface for Portability, general matrix-matrix multiply, function"
+
+// VERSION 1 //
 
 #include <hip/hip_runtime.h>
 #include <iostream>
@@ -180,12 +367,56 @@ int main() {
   return 0;
 }
 
+// VERSION 2 //
+
+#include <hip/hip_runtime.h>
+
+__global__ void matrixMultiplyKernel(float *A, float *B, float *C, int N) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  int j = blockIdx.y * blockDim.y + threadIdx.y;
+  if (i >= N || j >= N) return;
+  float sum = 0;
+  for (int k = 0; k < N; ++k) {
+    sum += A[i * N + k] * B[k * N + j];
+  }
+  C[i * N + j] = sum;
+}
+
+void matrixMultiply(float *A, float *B, float *C, int N) {
+  hipLaunchKernelGGL(matrixMultiplyKernel, dim3(N), dim3(N), 0, 0, A, B, C, N);
+}
+
+// VERSION 3 //
+
+#include <hip/hip_runtime.h>
+
+__shared__ float smem[N][N];
+
+__global__ void matrixMultiplyKernel(float *A, float *B, float *C, int N) {
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  int j = blockIdx.y * blockDim.y + threadIdx.y;
+  if (i >= N || j >= N) return;
+  float sum = 0;
+  for (int k = 0; k < N; ++k) {
+    smem[i * N + k] = A[i * N + k] * B[k * N + j];
+    __syncthreads();
+    sum += smem[i * N + k];
+  }
+  C[i * N + j] = sum;
+}
+
+void matrixMultiply(float *A, float *B, float *C, int N) {
+  hipLaunchKernelGGL(matrixMultiplyKernel, dim3(N), dim3(N), 0, 0, A, B, C, N);
+}
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // OpenACC
 
 // Prompt: "Give me code for the following:
 // C++, OpenACC, general matrix-matrix multiply, function"
+
+// VERSION 1 //
 
 #include <iostream>
 #include <cmath>
@@ -289,12 +520,63 @@ int main() {
   return 0;
 }
 
+// VERSION 2 //
+
+#include <openacc.h>
+
+void matrixMultiply(float *A, float *B, float *C, int N) {
+  #pragma acc data present(A[:N*N], B[:N*N], C[:N*N])
+  #pragma acc parallel present(A[:N*N], B[:N*N], C[:N*N])
+  {
+    #pragma acc loop gang, vector(32)
+    for (int i = 0; i < N; ++i) {
+      #pragma acc loop worker, vector(32)
+      for (int j = 0; j < N; ++j) {
+        float sum = 0;
+        #pragma acc loop scalar
+        for (int k = 0; k < N; ++k) {
+          sum += A[i * N + k] * B[k * N + j];
+        }
+        C[i * N + j] = sum;
+      }
+    }
+  }
+}
+
+// VERSION 3 //
+
+#include <openacc.h>
+
+void matrixMultiply(float *A, float *B, float *C, int N) {
+  #pragma acc routine(matrixMultiply)
+  {
+    #pragma acc data present(A[:N*N], B[:N*N], C[:N*N])
+    #pragma acc parallel present(A[:N*N], B[:N*N], C[:N*N])
+    {
+      #pragma acc loop gang, vector(32)
+      for (int i = 0; i < N; ++i) {
+        #pragma acc loop worker, vector(32)
+        for (int j = 0; j < N; ++j) {
+          float sum = 0;
+          #pragma acc loop scalar
+          for (int k = 0; k < N; ++k) {
+            sum += A[i * N + k] * B[k * N + j];
+          }
+          C[i * N + j] = sum;
+        }
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // CUDA
 
 // Prompt: "Give me code for the following:
 // C++, CUDA, general matrix-matrix multiply, function"
+
+// VERSION 1 //
 
 #include <iostream>
 #include <cuda_runtime.h>
@@ -371,4 +653,44 @@ int main() {
 
   return 0;
 }
+
+
+// VERSION 2 //
+
+#include <cuda_runtime.h>
+
+__global__ void matrixMultiply(float *A, float *B, float *C, int N) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx >= N) return;
+  
+  float sum = 0;
+  for (int k = 0; k < N; ++k) {
+    sum += A[idx * N + k] * B[k * N + idx];
+  }
+  C[idx * N + idx] = sum;
+}
+
+// VERSION 3 //
+
+#include <cuda_runtime.h>
+#include <omp.h>
+
+void matrixMultiply(float *A, float *B, float *C, int N) {
+  #pragma omp declare mapper(present)
+  {
+    #pragma omp parallel num_threads(256) default(none) shared(A, B, C, N)
+    {
+      int idx = omp_get_thread_num() * N + omp_get_linear_id();
+      if (idx >= N) return;
+      
+      float sum = 0;
+      #pragma omp simd reduction(+ : sum)
+      for (int k = 0; k < N; ++k) {
+        sum += A[idx * N + k] * B[k * N + idx];
+      }
+      C[idx * N + idx] = sum;
+    }
+  }
+}
+
 
