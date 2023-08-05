@@ -3,6 +3,9 @@
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenMP, General matrix-matrix multiply, subroutine"
 
+
+! VERSION 1 !
+
 Program MatrixMultiply
   Use ISO_C_BINDING
   Implicit none
@@ -58,12 +61,64 @@ Program MatrixMultiply
   deallocate(A, B, C)
 end program MatrixMultiply
 
+
+! VERSION 2 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !DECLARE OMP THREADS PRIVATE(A, B, C)
+  !DECLARE OMP TASK LOOP(A, B, C)
+  !OMP PARALLEL DO CONCURRENT(4) DEFAULT(NONE) SHARED(A, B, C)
+   do concurrent (i=1:r, j=1:s)
+     C(i,j) = dotProduct(A(i,:), B(:,j), m)
+   end do
+  !OMP END PARALLEL
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
+
+
+! VERSION 3 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !DECLARE OMP THREADS PRIVATE(A, B, C)
+  !DECLARE OMP TASK LOOP(A, B, C)
+  !OMP PARALLEL DO CONCURRENT(4) DEFAULT(NONE) SHARED(A, B, C)
+   do concurrent (i=1:r, j=1:s)
+     C(i,j) = dotProduct(A(i,:), B(:,j), m)
+   end do
+   !sync all
+   !OMP END PARALLEL
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
+
 ! -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ! OpenMP (offload)
 
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenMP (offload), General matrix-matrix multiply, subroutine"
+
+
+! VERSION 1 !
 
 Program MatrixMultiply
   Use ISO_C_BINDING
@@ -125,12 +180,66 @@ Program MatrixMultiply
   deallocate(A, B, C)
 end program MatrixMultiply
 
+
+! VERSION 2 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !$omp declare mapper(present)
+  !$omp declare regions(A, B, C)
+  !$omp offload present(A, B, C)
+  !$omp parallel do concurrent(4) default(none) shared(A, B, C)
+   do concurrent (i=1:r, j=1:s)
+     C(i,j) = dotProduct(A(i,:), B(:,j), m)
+   end do
+  !$omp end parallel
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
+
+
+! VERSION 3 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !$omp declare mapper(present)
+  !$omp declare regions(A, B, C)
+  !$omp offload present(A, B, C)
+  !$omp parallel do concurrent(4) default(none) shared(A, B, C)
+   do concurrent (i=1:r, j=1:s)
+     C(i,j) = dotProduct(A(i,:), B(:,j), m)
+   end do
+   !$omp barrier
+   !$omp target update from(A, B, C)
+   !$omp end parallel
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
+
 ! -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ! OpenACC
 
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenACC, General matrix-matrix multiply, subroutine"
+
+! VERSION 1 !
 
 program main
   use, intrinsic :: iso_c_binding
@@ -195,3 +304,56 @@ program main
   ! Deallocate memory for matrices
   deallocate(A, B, C)
 end program main
+
+
+! VERSION 2 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !DECLAREaccumulate(A, B, C)
+  !$omp declare mapper(present)
+  !$omp declare regions(A, B, C)
+  !$omp offload present(A, B, C)
+  !$omp parallel do concurrent(4) default(none) shared(A, B, C)
+    do concurrent (i=1:r, j=1:s)
+      C(i,j) = dotProduct(A(i,:), B(:,j), m)
+    end do
+  !$omp end parallel
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
+
+
+! VERSION 3 !
+
+SUBROUTINE mmul(A, B, C, n, m, p, q, r, s) RESULT(D)
+  IMPLICIT NONE
+  INTEGER :: n, m, p, q, r, s
+  REAL(C_DOUBLE) :: A(n, m), B(p, q), C(r, s)
+  !$omp declare mapper(present)
+  !$omp declare regions(A, B, C)
+  !$omp offload present(A, B, C)
+  !$omp parallel do concurrent(4) default(none) shared(A, B, C)
+    do concurrent (i=1:r, j=1:s)
+      C(i,j) = dotProduct(A(i,:), B(:,j), m)
+    end do
+    !$omp barrier
+    !$omp target update from(A, B, C)
+  !$omp end parallel
+END SUBROUTINE mmul
+
+function dotProduct(A, B, n) result(dot)
+  implicit none
+  real(c_double), intent(in) :: A(n)
+  real(c_double), intent(in) :: B(n)
+  integer :: n
+  dot = sum(A*B)
+end function dotProduct
