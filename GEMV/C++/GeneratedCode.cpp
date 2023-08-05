@@ -3,8 +3,7 @@
 // Prompt: "Give me code for the following:
 // C++, OpenMP, general matrix-vector multiply, function"
 
-#include <iostream>
-#include <omp.h>
+// VERSION 1 //
 
 #include <iostream>
 #include <omp.h>
@@ -40,6 +39,137 @@ void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) 
     }
 }
 
+// VERSION 2 //
+
+#include <iostream>
+#include <omp.h>
+
+void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) {
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C, m, n, k)
+  {
+    int tid = omp_get_thread_num();
+    double* A_tid = A + tid * m * k;
+    double* B_tid = B + tid * k * n;
+    double* C_tid = C + tid * m * n;
+    
+    #pragma omp for schedule(static)
+    for (int i = 0; i < m; ++i) {
+      for (int j = 0; j < n; ++j) {
+        double sum = 0;
+        for (int k = 0; k < k; ++k) {
+          sum += A_tid[i * k + k] * B_tid[k * n + j];
+        }
+        C_tid[i * n + j] = sum;
+      }
+    }
+  }
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+  
+  double* A = new double[m * k];
+  double* B = new double[k * n];
+  double* C = new double[m * n];
+  
+  // Initialize matrices
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < k; ++j) {
+      A[i * k + j] = i % 2 == 0 ? 1.0 : 0.0;
+    }
+  }
+  for (int i = 0; i < k; ++i) {
+    for (int j = 0; j < n; ++j) {
+      B[i * n + j] = i % 2 == 0 ? 1.0 : 0.0;
+    }
+  }
+  
+  matrixVectorMultiply(A, B, C, m, n, k);
+  
+  // Print result
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << C[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  
+  return 0;
+}
+
+// VERSION 3 //
+
+#include <iostream>
+#include <omp.h>
+
+void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) {
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C, m, n, k)
+  {
+    int tid = omp_get_thread_num();
+    double* A_tid = A + tid * m * k;
+    double* B_tid = B + tid * k * n;
+    double* C_tid = C + tid * m * n;
+    
+    #pragma omp task shared(A_tid, B_tid, C_tid) firstprivate(m, n, k)
+    {
+      #pragma omp for schedule(static)
+      for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+          double sum = 0;
+          for (int k = 0; k < k; ++k) {
+            sum += A_tid[i * k + k] * B_tid[k * n + j];
+          }
+          C_tid[i * n + j] = sum;
+        }
+      }
+    }
+  }
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+  
+  double* A = new double[m * k];
+  double* B = new double[k * n];
+  double* C = new double[m * n];
+  
+  // Initialize matrices
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < k; ++j) {
+      A[i * k + j] = i % 2 == 0 ? 1.0 : 0.0;
+    }
+  }
+  for (int i = 0; i < k; ++i) {
+    for (int j = 0; j < n; ++j) {
+      B[i * n + j] = i % 2 == 0 ? 1.0 : 0.0;
+    }
+  }
+  
+  matrixVectorMultiply(A, B, C, m, n, k);
+  
+  // Print result
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << C[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  
+  return 0;
+}
+
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -48,8 +178,11 @@ void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) 
 // Prompt: "Give me code for the following:
 // C++, OpenMP (offload), general matrix-vector multiply, function"
 
+// VERSION 1 //
+
 #include <iostream>
 #include <omp.h>
+
 
 // Declare a function that performs a matrix-vector multiplication
 void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) {
@@ -129,6 +262,60 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <iostream>
+#include <omp.h>
+
+void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) {
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C, m, n, k)
+  {
+    int tid = omp_get_thread_num();
+    double* A_tid = A + tid * m * k;
+    double* B_tid = B + tid * k * n;
+    double* C_tid = C + tid * m * n;
+    
+    #pragma omp for schedule(static)
+    for (int i = 0; i < m; ++i) {
+      for (int j = 0; j < n; ++j) {
+        double sum = 0;
+        for (int k = 0; k < k; ++k) {
+          sum += A_tid[i * k + k] * B_tid[k * n + j];
+        }
+        C_tid[i * n + j] = sum;
+      }
+    }
+  }
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <omp.h>
+
+void matrixVectorMultiply(double* A, double* B, double* C, int m, int n, int k) {
+  #pragma omp parallel num_threads(4) default(none) shared(A, B, C, m, n, k)
+  {
+    int tid = omp_get_thread_num();
+    double* A_tid = A + tid * m * k;
+    double* B_tid = B + tid * k * n;
+    double* C_tid = C + tid * m * n;
+    
+    #pragma omp for schedule(guided)
+    for (int i = 0; i < m; ++i) {
+      for (int j = 0; j < n; ++j) {
+        double sum = 0;
+        for (int k = 0; k < k; ++k) {
+          sum += A_tid[i * k + k] * B_tid[k * n + j];
+        }
+        C_tid[i * n + j] = sum;
+      }
+    }
+  }
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // HIP (Heterogeneous-Compute Interface for Portability)
@@ -136,6 +323,7 @@ int main() {
 // Prompt: "Give me code for the following:
 // C++, Heterogeneous-Compute Interface for Portability, general matrix-vector multiply, function"
 
+// VERSION 1 //
 
 #include <hip/hip_runtime.h>
 #include <iostream>
@@ -194,12 +382,100 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <hip/hip_runtime.h>
+#include <iostream>
+
+__global__ void matrixVectorMultiplyKernel(float* A, float* B, float* C, int m, int n, int k) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx >= m * n) return;
+  
+  float sum = 0;
+  for (int i = 0; i < k; ++i) {
+    sum += A[idx + i * m] * B[i * n + threadIdx.x];
+  }
+  C[idx] = sum;
+}
+
+void matrixVectorMultiply(float* A, float* B, float* C, int m, int n, int k) {
+  int blocks = (m + BLOCK_SIZE - 1) / BLOCK_SIZE;
+  int threads = BLOCK_SIZE;
+  
+  hipLaunchKernelGGL(matrixVectorMultiplyKernel, dim3(blocks), dim3(threads), 0, 0, A, B, C, m, n, k);
+}
+
+
+// VERSION 3 //
+
+#include <hip/hip_runtime.h>
+#include <iostream>
+
+__global__ void matrixVectorMultiplyKernel(float* A, float* B, float* C, int m, int n, int k) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx >= m * n) return;
+  
+  float sum = 0;
+  for (int i = 0; i < k; ++i) {
+    sum += A[idx + i * m] * B[i * n + threadIdx.x];
+  }
+  C[idx] = sum;
+}
+
+void matrixVectorMultiply(float* A, float* B, float* C, int m, int n, int k) {
+  int blocks = (m + BLOCK_SIZE - 1) / BLOCK_SIZE;
+  int threads = BLOCK_SIZE;
+  
+  hipLaunchKernelGGL(matrixVectorMultiplyKernel, dim3(blocks), dim3(threads), 0, 0, A, B, C, m, n, k);
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+  
+  float* A = new float[m * k];
+  float* B = new float[k * n];
+  float* C = new float[m * n];
+  
+  // Initialize data
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < k; ++j) {
+      A[i * k + j] = i * k + j;
+    }
+  }
+  for (int i = 0; i < k; ++i) {
+    for (int j = 0; j < n; ++j) {
+      B[i * n + j] = i * n + j;
+    }
+  }
+  
+  matrixVectorMultiply(A, B, C, m, n, k);
+  
+  // Print result
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << C[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  
+  return 0;
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // OpenACC
 
 // Prompt: "Give me code for the following:
 // C++, OpenACC, general matrix-vector multiply, function"
+
+// VERSION 1 //
 
 #include <iostream>
 #include <openacc.h>
@@ -255,12 +531,176 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <iostream>
+#include <cmath>
+#include <openacc.h>
+
+// Function to perform matrix-vector multiplication
+void matVecMult(float* A, float* B, float* C, int m, int n, int k) {
+  #pragma acc parallel num_gangs(1) gang_size(256) default_device(cpu)
+  {
+    // Calculate local tile size
+    int tilesize = ceil((m + 255) / 256) * 256;
+    
+    // Loop over tiles
+    for (int i = 0; i < m; i += tilesize) {
+      for (int j = 0; j < n; j++) {
+        // Initialize local sum vector
+        float sums[k];
+        #pragma acc loop independent
+        for (int p = 0; p < k; p++) {
+          sums[p] = 0;
+        }
+        
+        // Perform dot product
+        #pragma acc loop Gang, Vector(4)
+        for (int p = 0; p < k; p++) {
+          for (int q = 0; q < tilesize; q++) {
+            sums[p] += A[i + q * m + p] * B[q * n + j];
+          }
+        }
+        
+        // Store results
+        #pragma acc atomic update
+        C[i + j * m] = sums[0];
+        C[(i + 1) + j * m] = sums[1];
+        C[(i + 2) + j * m] = sums[2];
+        C[(i + 3) + j * m] = sums[3];
+      }
+    }
+  }
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+  
+  float* A = new float[m * k];
+  float* B = new float[k * n];
+  float* C = new float[m * n];
+  
+  // Initialize data
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < k; ++j) {
+      A[i * k + j] = i * k + j;
+    }
+  }
+  for (int i = 0; i < k; ++i) {
+    for (int j = 0; j < n; ++j) {
+      B[i * n + j] = i * n + j;
+    }
+  }
+  
+  matVecMult(A, B, C, m, n, k);
+  
+  // Print result
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << C[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <cmath>
+#include <openacc.h>
+
+// Function to perform matrix-vector multiplication
+void matVecMult(float* A, float* B, float* C, int m, int n, int k) {
+  #pragma acc parallel num_gangs(1) gang_size(256) default_device(cpu)
+  {
+    // Calculate local tile size
+    int tilesize = ceil((m + 255) / 256) * 256;
+    
+    // Loop over tiles
+    for (int i = 0; i < m; i += tilesize) {
+      for (int j = 0; j < n; j++) {
+        // Initialize local sum vector
+        float sums[k];
+        #pragma acc loop independent
+        for (int p = 0; p < k; p++) {
+          sums[p] = 0;
+        }
+        
+        // Perform dot product
+        #pragma acc loop Gang, Vector(4)
+        for (int p = 0; p < k; p++) {
+          for (int q = 0; q < tilesize; q++) {
+            sums[p] += A[i + q * m + p] * B[q * n + j];
+          }
+        }
+        
+        // Store results
+        #pragma acc atomic update
+        C[i + j * m] = sums[0];
+        C[(i + 1) + j * m] = sums[1];
+        C[(i + 2) + j * m] = sums[2];
+        C[(i + 3) + j * m] = sums[3];
+      }
+    }
+  }
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+  
+  float* A = new float[m * k];
+  float* B = new float[k * n];
+  float* C = new float[m * n];
+  
+  // Initialize data
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < k; ++j) {
+      A[i * k + j] = i * k + j;
+    }
+  }
+  for (int i = 0; i < k; ++i) {
+    for (int j = 0; j < n; ++j) {
+      B[i * n + j] = i * n + j;
+    }
+  }
+  
+  matVecMult(A, B, C, m, n, k);
+  
+  // Print result
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      std::cout << C[i * n + j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  
+  return 0;
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // CUDA
 
 // Prompt: "Give me code for the following:
 // C++, CUDA, general matrix-vector multiply, function"
+
+// VERSION 1 // 
 
 #include <cuda_runtime.h>
 
@@ -318,6 +758,127 @@ int main() {
   delete[] B;
   delete[] C;
   
+  return 0;
+}
+
+
+// VERSION 2 //
+
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+void matVecMult(float* A, float* B, float* C, int m, int n, int k) {
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      float sum = 0;
+      for (int p = 0; p < k; p++) {
+        sum += A[i * k + p] * B[p * n + j];
+      }
+      C[i * n + j] = sum;
+    }
+  }
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+
+  float* A = new float[m * k];
+  float* B = new float[k * n];
+  float* C = new float[m * n];
+
+  // Initialize data
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < k; j++) {
+      A[i * k + j] = i * k + j;
+    }
+  }
+  for (int i = 0; i < k; i++) {
+    for (int j = 0; j < n; j++) {
+      B[i * n + j] = i * n + j;
+    }
+  }
+
+  matVecMult(A, B, C, m, n, k);
+
+  // Print result
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      cout << C[i * n + j] << " ";
+    }
+    cout << endl;
+  }
+
+  delete[] A;
+  delete[] B;
+  delete[] C;
+
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <cuda_runtime.h>
+using namespace std;
+
+__global__ void matVecMultKernel(float* A, float* B, float* C, int m, int n, int k) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx >= m * n) return;
+
+  float sum = 0;
+  for (int p = 0; p < k; p++) {
+    sum += A[idx / n + p] * B[p * n + idx % n];
+  }
+  C[idx] = sum;
+}
+
+void matVecMultGPU(float* A, float* B, float* C, int m, int n, int k) {
+  int numBlocks = (m * n + BLOCK_SIZE - 1) / BLOCK_SIZE;
+  dim3 blocks(numBlocks, 1, 1);
+  dim3 threads(BLOCK_SIZE, 1, 1);
+
+  matVecMultKernel<<<blocks, threads>>>(A, B, C, m, n, k);
+}
+
+int main() {
+  const int m = 8;
+  const int n = 8;
+  const int k = 8;
+
+  float* A = new float[m * k];
+  float* B = new float[k * n];
+  float* C = new float[m * n];
+
+  // Initialize data
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < k; j++) {
+      A[i * k + j] = i * k + j;
+    }
+  }
+  for (int i = 0; i < k; i++) {
+    for (int j = 0; j < n; j++) {
+      B[i * n + j] = i * n + j;
+    }
+  }
+
+  matVecMultGPU(A, B, C, m, n, k);
+
+  // Print result
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      cout << C[i * n + j] << " ";
+    }
+    cout << endl;
+  }
+
+  delete[] A;
+  delete[] B;
+  delete[] C;
+
   return 0;
 }
 
