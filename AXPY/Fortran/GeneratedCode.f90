@@ -3,6 +3,8 @@
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenMP, AXPY, subroutine"
 
+! VERSION 1 !
+
 Program Example
   Implicit none
 
@@ -39,12 +41,97 @@ contains
   end subroutine axpy
 end program example
 
+
+! VERSION 2 !
+
+module matrix_ops
+  implicit none
+
+contains
+
+  subroutine axpy(n, alpha, x, y) result(sum)
+    integer :: n
+    real(kind=8) :: alpha, x(n), y(n)
+    real(kind=8) :: sum
+
+    !$omp declare mapper(Preserve)
+    !$omp parallel num_threads(4) default(none) shared(x,y)
+    !$omp do concurrent(4)
+    !$omp sections
+    !$omp single
+
+    sum = 0.d0
+    do concurrent(4)
+      do i = 1, n
+        sum = sum + alpha * x(i) * y(i)
+      enddo
+    enddo
+
+    !$omp end single
+    !$omp endsections
+    !$omp endparallel
+
+  end subroutine axpy
+end module matrix_ops
+
+program main
+  use matrix_ops
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
+
+! VERSION 3 !
+
+subroutine axpy(n, alpha, x, y) result(sum)
+  integer :: n
+  real(kind=8) :: alpha, x(n), y(n)
+  real(kind=8) :: sum
+
+  !$omp declare mapper(Preserve)
+  !$omp parallel num_threads(4) default(none) shared(x,y)
+  !$omp do concurrent(4)
+  !$omp sections
+  !$omp single
+
+  sum = 0.d0
+  do concurrent(4)
+    do i = 1, n
+      sum = sum + alpha * x(i) * y(i)
+    enddo
+  enddo
+
+  !$omp end single
+  !$omp endsections
+  !$omp endparallel
+
+end subroutine axpy
+
+program main
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
 ! ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ! OpenMP (offload)
 
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenMP (offload), AXPY, subroutine"
+
+! VERSION 1 !
 
 Program Example
   Implicit none
@@ -85,12 +172,101 @@ contains
   end subroutine axpy
 end program example
 
+
+! VERSION 2 !
+
+module matrix_ops
+  implicit none
+
+contains
+
+  subroutine axpy(n, alpha, x, y) result(sum)
+    integer :: n
+    real(kind=8) :: alpha, x(n), y(n)
+    real(kind=8) :: sum
+
+    !$omp declare mapper(Preserve)
+    !$omp parallel num_threads(4) default(none) shared(x,y)
+    !$omp offload(4)
+    !$omp do concurrent(4)
+    !$omp sections
+    !$omp single
+
+    sum = 0.d0
+    do concurrent(4)
+      do i = 1, n
+        sum = sum + alpha * x(i) * y(i)
+      enddo
+    enddo
+
+    !$omp end single
+    !$omp endsections
+    !$omp endoffload
+    !$omp endparallel
+
+  end subroutine axpy
+end module matrix_ops
+
+program main
+  use matrix_ops
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
+
+! VERSION 3 !
+
+subroutine axpy(n, alpha, x, y) result(sum)
+  integer :: n
+  real(kind=8) :: alpha, x(n), y(n)
+  real(kind=8) :: sum
+
+  !$omp declare mapper(Preserve)
+  !$omp parallel num_threads(4) default(none) shared(x,y)
+  !$omp offload(4)
+  !$omp do concurrent(4)
+  !$omp sections
+  !$omp single
+
+  sum = 0.d0
+  do concurrent(4)
+    do i = 1, n
+      sum = sum + alpha * x(i) * y(i)
+    enddo
+  enddo
+
+  !$omp end single
+  !$omp endsections
+  !$omp endoffload
+  !$omp endparallel
+
+end subroutine axpy
+
+program main
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
 ! ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ! OpenACC
 
 ! Prompt: "Give me code for the following:
 ! Fortran, OpenACC, AXPY, subroutine"
+
+! VERSION 1 !
 
 Program Example
   Implicit none
@@ -132,3 +308,91 @@ contains
     return
   end subroutine axpy
 end program example
+
+
+! VERSION 2 !
+
+module matrix_ops
+  implicit none
+
+contains
+
+  subroutine axpy(n, alpha, x, y) result(sum)
+    integer :: n
+    real(kind=8) :: alpha, x(n), y(n)
+    real(kind=8) :: sum
+
+    !DECLARE_mapper( Preserve )
+    !PARALLEL num_threads(4) default(none) shared(x,y)
+    !ACCELERATOR( gpu )
+    !DO CONCURRENT(4)
+    !SECTIONS
+    !SINGLE
+
+    sum = 0.d0
+    do concurrent(4)
+      do i = 1, n
+        sum = sum + alpha * x(i) * y(i)
+      enddo
+    enddo
+
+    !END SINGLE
+    !ENDIF defined(__GPU)
+    !ENDACCELERATOR
+    !ENDPARALLEL
+
+  end subroutine axpy
+end module matrix_ops
+
+program main
+  use matrix_ops
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
+
+! VERSION 3 !
+
+subroutine axpy(n, alpha, x, y) result(sum)
+  integer :: n
+  real(kind=8) :: alpha, x(n), y(n)
+  real(kind=8) :: sum
+
+  !DECLARE_mapper( Preserve )
+  !PARALLEL num_threads(4) default(none) shared(x,y)
+  !ACCELERATOR( gpu )
+  !DO CONCURRENT(4)
+  !SECTIONS
+  !SINGLE
+
+  sum = 0.d0
+  do concurrent(4)
+    do i = 1, n
+      sum = sum + alpha * x(i) * y(i)
+    enddo
+  enddo
+
+  !END SINGLE
+  !ENDIF defined(__GPU)
+  !ENDACCELERATOR
+  !ENDPARALLEL
+
+end subroutine axpy
+
+program main
+  implicit none
+
+  integer :: n = 10
+  real(kind=8) :: x(n), y(n), alpha = 3.d0
+
+  call axpy(n, alpha, x, y)
+  write (*,*) 'Sum = ', sum
+
+end program main
+
