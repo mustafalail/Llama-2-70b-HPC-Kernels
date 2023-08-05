@@ -3,6 +3,8 @@
 // Prompt: "Give me code for the following:
 // C++, OpenMP, AXPY, function"
 
+// VERSION 1 // 
+
 #include <iostream>
 #include <omp.h>
 
@@ -39,6 +41,107 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 // 
+
+#include <iostream>
+#include <omp.h>
+
+void axpy(float* x, float* y, int n) {
+  #pragma omp parallel num_threads(4) default(none) shared(x, y, n)
+  {
+    int tid = omp_get_thread_num();
+    int start = tid * (n / 4);
+    int end = (tid == 3) ? n : (start + (n / 4));
+    #pragma omp for schedule(static) nowait
+    for (int i = start; i < end; ++i) {
+      x[i] += y[i];
+    }
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <vector>
+#include <thread>
+#include <mutex>
+
+void axpy(float* x, float* y, int n) {
+  std::vector<float> vx(n);
+  std::vector<float> vy(n);
+  for (int i = 0; i < n; i++) {
+    vx[i] = x[i];
+    vy[i] = y[i];
+  }
+  std::mutex mtx;
+  auto t1 = std::thread([&vx, &vy, n, mtx] {
+    for (int i = 0; i < n; i++) {
+      vx[i] += vy[i];
+    }
+  });
+  auto t2 = std::thread([&vx, &vy, n, mtx] {
+    for (int i = n / 2; i < n; i++) {
+      vx[i] += vy[i];
+    }
+  });
+  auto t3 = std::thread([&vx, &vy, n, mtx] {
+    for (int i = n / 3; i < n / 2; i++) {
+      vx[i] += vy[i];
+    }
+  });
+  auto t4 = std::thread([&vx, &vy, n, mtx] {
+    for (int i = 0; i < n / 3; i++) {
+      vx[i] += vy[i];
+    }
+  });
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
+  for (int i = 0; i < n; i++) {
+    x[i] = vx[i];
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -46,6 +149,8 @@ int main() {
 
 // Prompt: "Give me code for the following:
 // C++, OpenMP (offload), AXPY, function"
+
+// VERSION 1 //
 
 #include <iostream>
 #include <omp.h>
@@ -88,6 +193,80 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <iostream>
+#include <omp.h>
+
+void axpy(float* x, float* y, int n) {
+  #pragma omp parallel num_threads(4) default(none) shared(x, y, n)
+  {
+    int tid = omp_get_thread_num();
+    int start = tid * (n / 4);
+    int end = (tid == 3) ? n : (start + (n / 4));
+    #pragma omp for schedule(static) nowait
+    for (int i = start; i < end; ++i) {
+      x[i] += y[i];
+    }
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+
+// VERSION 3 //
+
+#include <iostream>
+#include <vector>
+#include <omp.h>
+
+void axpy(std::vector<float>& x, std::vector<float>& y, int n) {
+  #pragma omp parallel num_threads(4) default(none) shared(x, y, n)
+  {
+    int tid = omp_get_thread_num();
+    int start = tid * (n / 4);
+    int end = (tid == 3) ? n : (start + (n / 4));
+    #pragma omp for schedule(static) nowait
+    for (int i = start; i < end; ++i) {
+      x[i] += y[i];
+    }
+  }
+}
+
+int main() {
+  const int N = 1024;
+  std::vector<float> x(N);
+  std::vector<float> y(N);
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  return 0;
+}
+
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -95,6 +274,9 @@ int main() {
 
 // Prompt: "Give me code for the following:
 // C++, Heterogeneous-Compute Interface for Portability, AXPY, function"
+
+
+// VERSION 1 //
 
 #include <hip/hip_runtime.h>
 #include <iostream>
@@ -160,6 +342,66 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <hip/hip_runtime.h>
+#include <iostream>
+
+__global__ void axpy(float* x, float* y, int n) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < n) {
+    x[idx] += y[idx];
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  hipLaunchKernelGGL(axpy, dim3(128), dim3(128), 0, 0, x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+// VERSION 3 // 
+
+#include <hip/hip_runtime.h>
+#include <iostream>
+#include <vector>
+
+__global__ void axpy(float* x, float* y, int n) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < n) {
+    x[idx] += y[idx];
+  }
+}
+
+int main() {
+  const int N = 1024;
+  std::vector<float> x(N);
+  std::vector<float> y(N);
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  hipLaunchKernelGGL(axpy, dim3(128), dim3(128), 0, 0, x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  return 0;
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -167,6 +409,8 @@ int main() {
 
 // Prompt: "Give me code for the following:
 // C++, OpenACC, AXPY, function"
+
+// VERSION 1 //
 
 #include <openacc.h>
 #include <iostream>
@@ -230,6 +474,74 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <openacc.h>
+#include <iostream>
+
+void axpy(float* x, float* y, int n) {
+  #pragma acc data present(x, y)
+  #pragma acc parallelism num_gangs(1) num_workers(128)
+  {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < n) {
+      x[idx] += y[idx];
+    }
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+// VERSION 3 // 
+
+#include <openacc.h>
+#include <iostream>
+#include <vector>
+
+void axpy(std::vector<float>& x, std::vector<float>& y, int n) {
+  #pragma acc data present(x, y)
+  #pragma acc parallelism num_gangs(1) num_workers(128)
+  {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < n) {
+      x[idx] += y[idx];
+    }
+  }
+}
+
+int main() {
+  const int N = 1024;
+  std::vector<float> x(N);
+  std::vector<float> y(N);
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  axpy(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  return 0;
+}
+
 // --------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -237,6 +549,8 @@ int main() {
 
 // Prompt: "Give me code for the following:
 // C++, CUDA, AXPY, function"
+
+// VERSION 1 // 
 
 #include <cuda_runtime.h>
 
@@ -291,3 +605,73 @@ int main() {
   return 0;
 }
 
+
+// VERSION 2 //
+
+#include <cuda_runtime.h>
+
+__global__ void axpy(float* x, float* y, int n) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < n) {
+    x[idx] += y[idx];
+  }
+}
+
+int main() {
+  const int N = 1024;
+  float* x = new float[N];
+  float* y = new float[N];
+  for (int i = 0; i < N; i++) {
+    x[i] = i / 2.0f;
+    y[i] = i + 1.0f;
+  }
+  int threadsPerBlock = 128;
+  int numBlocks = (N + threadsPerBlock - 1) / threadsPerBlock;
+  axpy<<<numBlocks, threadsPerBlock>>>(x, y, N);
+  for (int i = 0; i < N; i++) {
+    std::cout << x[i] << " ";
+  }
+  std::cout << std::endl;
+  delete[] x;
+  delete[] y;
+  return 0;
+}
+
+// VERSION 3 //
+
+#include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
+
+__global__ void axpy(thrust::device_vector<float>& x, thrust::device_vector<float>& y, int n) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  if (idx < n) {
+    x[idx] += y[idx];
+  }
+}
+
+int main() {
+  const int N = 1024;
+  thrust::host_vector<float> h_x(N);
+  thrust::host_vector<float> h_y(N);
+  for (int i = 0; i < N; i++) {
+    h_x[i] = i / 2.0f;
+    h_y[i] = i + 1.0f;
+  }
+  thrust::device_vector<float> d_x(N);
+  thrust::device_vector<float> d_y(N);
+  d_x.transfer_from(h_x);
+  d_y.transfer_from(h_y);
+  int threadsPerBlock = 128;
+  int numBlocks = (N + threadsPerBlock - 1) / threadsPerBlock;
+  axpy<<<numBlocks, threadsPerBlock>>>(d_x, d_y, N);
+  d_x.transfer_to(h_x);
+  for (int i = 0; i < N; i++) {
+    std::cout << h_x[i] << " ";
+  }
+  std::cout << std::endl;
+
+
+
+  
+  return 0;
+}
