@@ -1,6 +1,6 @@
 ! OpenMP
 
-! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP AXPY subroutine."
+! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP general matrix-matrix multiply subroutine."
 
 ! SUGGESTION 1 ! ----------------------------------
 
@@ -16,7 +16,7 @@
 
 ! OpenMP(offload)
 
-! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP(offload) AXPY subroutine."
+! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP(offload) general matrix-matrix multiply subroutine."
 
 ! SUGGESTION 1 ! ----------------------------------
 
@@ -32,7 +32,7 @@
 
 ! OpenACC
 
-! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenACC AXPY subroutine."
+! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenACC general matrix-matrix multiply subroutine."
 
 ! SUGGESTION 1 ! ----------------------------------
 
