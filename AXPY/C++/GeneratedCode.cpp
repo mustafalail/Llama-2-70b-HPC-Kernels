@@ -46,9 +46,9 @@
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// HIP
+// HIP(Heterogeneous-Compute Interface for Portability)
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ HIP(Heterogeneous-Compute Interface for Portability) AXPY function"
 
 // SUGGESTION 1 // ----------------------------------
 
@@ -62,9 +62,9 @@
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// OpenMP
+// CUDA
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA AXPY function"
 
 // SUGGESTION 1 // ----------------------------------
 
