@@ -3,7 +3,7 @@
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python numpy general matrix-vector multiply def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import numpy as np
 
@@ -21,7 +21,7 @@ def matrix_vector_multiply(matrix, vector):
     return np.dot(matrix, vector)
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import numpy as np
 
@@ -43,7 +43,7 @@ def dynamic_matrix_vector_multiply(matrix, vector, num_iterations=1000):
     return result
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import numpy as np
 from numba import jit
@@ -68,7 +68,7 @@ def matrix_vector_multiply(matrix, vector):
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python cuPy general matrix-vector multiply def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import cupy
 
@@ -86,7 +86,7 @@ def cupy_matrix_vector_multiply(A, b):
     return cupy.matmul(A, b)
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import cupy
 
@@ -115,7 +115,7 @@ def batched_cuppy_matrix_vector_multiply(A, b, batch_size=16):
     return cupy.concatenate(results)
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import cupy
 
@@ -147,7 +147,7 @@ def strided_cuppy_matrix_vector_multiply(A, b, stride=1):
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA general matrix-vector multiply def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import pycuda.driver as cudadrv
 from pycuda.compiler import SourceModule
@@ -194,7 +194,7 @@ cudadrv.synchronize()
 C = dC.copy_to_host()
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import pycuda.driver as cudadrv
 from pycuda.compiler import SourceModule
@@ -241,7 +241,7 @@ cudadrv.synchronize()
 C = dC.copy_to_host()
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import pycuda.driver as cudadrv
 from pycuda.compiler import SourceModule
@@ -296,7 +296,7 @@ C = dC.copy_to_host()
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python Numba general matrix-vector multiply def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import numpy as np
 from numba import jit
@@ -326,7 +326,7 @@ def matvec_mul(A, b):
     return out
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import numpy as np
 from numba import jit
@@ -356,7 +356,7 @@ def matvec_mul(As, bs):
     return out
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import numpy as np
 from numba import jit, prange, parallel
