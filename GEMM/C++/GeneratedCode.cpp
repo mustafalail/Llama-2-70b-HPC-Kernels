@@ -1,6 +1,6 @@
 // OpenMP
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP General matrix-matrix multiply function"
 
 // SUGGESTION 1 // ----------------------------------
 
@@ -16,7 +16,7 @@
 
 // OpenMP(offload)
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP(offload) AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP(offload) General matrix-matrix multiply function"
 
 // SUGGESTION 1 // ----------------------------------
 
@@ -32,7 +32,7 @@
 
 // OpenACC
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenACC AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ OpenACC General matrix-matrix multiply function"
 
 // SUGGESTION 1 // ----------------------------------
 
@@ -48,7 +48,7 @@
 
 // HIP(Heterogeneous-Compute Interface for Portability)
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ HIP(Heterogeneous-Compute Interface for Portability) AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ HIP(Heterogeneous-Compute Interface for Portability) General matrix-matrix multiply function"
 
 // SUGGESTION 1 // ----------------------------------
 
@@ -64,7 +64,7 @@
 
 // CUDA
 
-// Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA AXPY function"
+// Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA General matrix-matrix multiply function"
 
 // SUGGESTION 1 // ----------------------------------
 
