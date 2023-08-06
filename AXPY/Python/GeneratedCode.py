@@ -2,7 +2,7 @@
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python numpy AXPY def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import numpy as np
 
@@ -15,7 +15,7 @@ c = np.axpy(a, b)
 print(c) # Output: array([4, 10, 18])
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import numpy as np
 
@@ -28,7 +28,7 @@ C = np.dot(A, B)
 print(C) # Output: array([[19, 22], [43, 50]])
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import numpy as np
 
@@ -47,7 +47,7 @@ print(c) # Output: array([4, 10, 18])
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python cuPy AXPY def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import cupy
 import numpy as np
@@ -63,7 +63,7 @@ cupy.axpy(A, x, y)
 print(y) # Output: array([2., 4., 6.])
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import cupy
 import numpy as np
@@ -80,7 +80,7 @@ print(y) # Output: array([[2., 4., 6.],
                        [7., 10., 13.]])
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import cupy
 import numpy as np
@@ -103,91 +103,139 @@ print(y) # Output: array([2., 4., 6.])
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA AXPY def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
-import pycuda.driver as cudadrv
+import pycuda.driver as drv
 from pycuda.compiler import SourceModule
 
-# Define a kernel for the vector-matrix multiplication
-mod = SourceModule("""
-__global__ void axpy(float **A, float **x, float **y, int N, int M) {
+# Define the AXPY kernel
+src = """
+__global__ void axpy(float *A, float *x, float *y, int N) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < N) {
-        for (int j = 0; j < M; ++j) {
-            y[i][j] = A[i][j] * x[i][j];
-        }
+        y[i] = A[i] * x[i];
     }
 }
- """)
+"""
 
-# Load the kernel into the GPU
-dev = cudadrv.Device()
-func = mod.get_function("axpy")
+# Compile the kernel
+mod = SourceModule(src)
+axpy_kernel = mod.get_function("axpy")
 
-# Allocate memory on the GPU for the inputs and outputs
-A = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
-x = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
-y = cudadrv.to_device(numpy.zeros((10, 10)).astype(numpy.float32))
+# Initialize the GPU memory
+drv.device.create_buffer(A, N * sizeof(float))
+drv.device.create_buffer(x, N * sizeof(float))
+drv.device.create_buffer(y, N * sizeof(float))
 
-# Set the number of blocks and threads per block
-block_size = 16
-grid_size = (10 + block_size - 1) // block_size
+# Copy the data to the GPU
+drv.memcpy_htod(A, h_A)
+drv.memcpy_htod(x, h_x)
 
 # Launch the kernel
-func(A, x, y, 10, 10, block_size, grid_size)
+block_size = 16
+grid_size = (N + block_size - 1) // block_size
+axpy_kernel(A, x, y, N, block_size, grid_size)
 
 # Synchronize the threads
-cudadrv.synchronize()
+drv.device.synchronize()
 
 # Copy the result back to the CPU
-result = y.copy_to_host()
-print(result)
+drv.memcpy_dtoh(y, h_y)
+
+# Free the GPU memory
+drv.device.destroy_buffer(A)
+drv.device.destroy_buffer(x)
+drv.device.destroy_buffer(y)
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
-import pycuda.driver as cudadrv
+import pycuda.driver as drv
 from pycuda.compiler import SourceModule
 
-# Define a kernel for the matrix-vector multiplication
-mod = SourceModule("""
-__global__ void axpy(float **A, float **x, float **y, int N, int M) {
+# Define the strided AXPY kernel
+src = """
+__global__ void axpy(float *A, float *x, float *y, int N, int stride) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < N) {
-        for (int j = 0; j < M; ++j) {
-            y[i][j] = A[i][j] * x[j];
-        }
+        y[i*stride] = A[i*stride] * x[i];
     }
 }
- """)
+"""
 
-# Load the kernel into the GPU
-dev = cudadrv.Device()
-func = mod.get_function("axpy")
+# Compile the kernel
+mod = SourceModule(src)
+axpy_kernel = mod.get_function("axpy")
 
-# Allocate memory on the GPU for the inputs and outputs
-A = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
-x = cudadrv.to_device(numpy.random.rand(10).astype(numpy.float32))
-y = cudadrv.to_device(numpy.zeros((10, 10)).astype(numpy.float32))
+# Initialize the GPU memory
+drv.device.create_buffer(A, N * sizeof(float))
+drv.device.create_buffer(x, N * sizeof(float))
+drv.device.create_buffer(y, N * sizeof(float))
 
-# Set the number of blocks and threads per block
-block_size = 16
-grid_size = (10 + block_size - 1) // block_size
+# Copy the data to the GPU
+drv.memcpy_htod(A, h_A)
+drv.memcpy_htod(x, h_x)
 
 # Launch the kernel
-func(A, x, y, 10, 10, block_size, grid_size)
+block_size = 16
+grid_size = (N + block_size - 1) // block_size
+axpy_kernel(A, x, y, N, block_size, grid_size, stride)
 
 # Synchronize the threads
-cudadrv.synchronize()
+drv.device.synchronize()
 
 # Copy the result back to the CPU
-result = y.copy_to_host()
-print(result)
+drv.memcpy_dtoh(y, h_y)
+
+# Free the GPU memory
+drv.device.destroy_buffer(A)
+drv.device.destroy_buffer(x)
+drv.device.destroy_buffer(y)
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
-# ONLY 2 CODES WERE PROVIDED #
+import pycuda.driver as drv
+from pycuda.compiler import SourceModule
+
+# Define the matrix-matrix multiplication kernel
+src = """
+__global__ void matmat(float *A, float *B, float *C, int M, int N) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < M) {
+        C[i*N+threadIdx.y] = A[i*M+threadIdx.x] * B[threadIdx.y*N+i];
+    }
+}
+"""
+
+# Compile the kernel
+mod = SourceModule(src)
+matmat_kernel = mod.get_function("matmat")
+
+# Initialize the GPU memory
+drv.device.create_buffer(A, M * N * sizeof(float))
+drv.device.create_buffer(B, M * N * sizeof(float))
+drv.device.create_buffer(C, M * N * sizeof(float))
+
+# Copy the data to the GPU
+drv.memcpy_htod(A, h_A)
+drv.memcpy_htod(B, h_B)
+
+# Launch the kernel
+block_size = 16
+grid_size = (M + block_size - 1) // block_size
+matmat_kernel(A, B, C, M, N, block_size, grid_size)
+
+# Synchronize the threads
+drv.device.synchronize()
+
+# Copy the result back to the CPU
+drv.memcpy_dtoh(C, h_C)
+
+# Free the GPU memory
+drv.device.destroy_buffer(A)
+drv.device.destroy_buffer(B)
+drv.device.destroy_buffer(C)
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +244,7 @@ print(result)
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python Numba AXPY def."
 
-# VERSION 1 #
+# SUGGESTION 1 #
 
 import numba
 
@@ -212,7 +260,7 @@ axpy_loop(a, b, n)
 print(a) # Output: array([5, 7, 9])
 
 
-# VERSION 2 #
+# SUGGESTION 2 #
 
 import numba
 import numpy as np
@@ -238,7 +286,7 @@ result = axpy_gpu(a, b, n)
 print(result)
 
 
-# VERSION 3 #
+# SUGGESTION 3 #
 
 import numba
 
@@ -252,7 +300,7 @@ n = len(a)
 result = axpy_numba(a, b, n)
 print(result) # Output: array([5, 7, 9])
 
-
+# ------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
