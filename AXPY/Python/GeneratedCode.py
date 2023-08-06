@@ -2,7 +2,7 @@
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python numpy AXPY def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import numpy as np
 
@@ -15,7 +15,7 @@ c = np.axpy(a, b)
 print(c) # Output: array([4, 10, 18])
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import numpy as np
 
@@ -28,7 +28,7 @@ C = np.dot(A, B)
 print(C) # Output: array([[19, 22], [43, 50]])
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import numpy as np
 
@@ -41,13 +41,13 @@ c = np.multiply(a, b)
 print(c) # Output: array([4, 10, 18])
 
 
-# ----------------------------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # cuPy
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python cuPy AXPY def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import cupy
 import numpy as np
@@ -63,7 +63,7 @@ cupy.axpy(A, x, y)
 print(y) # Output: array([2., 4., 6.])
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import cupy
 import numpy as np
@@ -80,7 +80,7 @@ print(y) # Output: array([[2., 4., 6.],
                        [7., 10., 13.]])
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import cupy
 import numpy as np
@@ -103,7 +103,7 @@ print(y) # Output: array([2., 4., 6.])
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA AXPY def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import pycuda.driver as drv
 from pycuda.compiler import SourceModule
@@ -148,7 +148,7 @@ drv.device.destroy_buffer(x)
 drv.device.destroy_buffer(y)
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import pycuda.driver as drv
 from pycuda.compiler import SourceModule
@@ -193,7 +193,7 @@ drv.device.destroy_buffer(x)
 drv.device.destroy_buffer(y)
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import pycuda.driver as drv
 from pycuda.compiler import SourceModule
@@ -244,7 +244,7 @@ drv.device.destroy_buffer(C)
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python Numba AXPY def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import numba
 
@@ -260,7 +260,7 @@ axpy_loop(a, b, n)
 print(a) # Output: array([5, 7, 9])
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import numba
 import numpy as np
@@ -286,7 +286,7 @@ result = axpy_gpu(a, b, n)
 print(result)
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import numba
 
