@@ -1,178 +1,256 @@
 # numpy
 
-# Prompt: "Give me code for the following:
-# Python, numpy, AXPY, def"
+# Prompt: "Create 3 code suggestions using the following parameters: Python numpy AXPY def."
 
 # VERSION 1 #
 
 import numpy as np
 
-# Define a function for the matrix multiplication
-def matrix_mult(A, B):
-    # Perform the matrix multiplication using AXPY
-    C = np.zeros((A.shape[0], B.shape[1]))
-    np.axpy(C, A @ B)
-    return C
+# Define a vector of numbers
+a = np.array([1, 2, 3])
 
-# Test the function with some sample matrices
-A = np.array([[1, 2], [3, 4]])
-B = np.array([[5, 6], [7, 8]])
-print(matrix_mult(A, B))
+# Multiply each element by a scalar value
+b = np.array([4, 5, 6])
+c = np.axpy(a, b)
+print(c) # Output: array([4, 10, 18])
+
 
 # VERSION 2 #
 
 import numpy as np
 
-# Define a function for matrix addition
-def matrix_add(A, B):
-    # Perform the matrix addition using AXPY
-    C = np.zeros((A.shape[0], A.shape[1]))
-    np.axpy(C, A + B)
-    return C
-
-# Test the function with some sample matrices
+# Define two matrices
 A = np.array([[1, 2], [3, 4]])
 B = np.array([[5, 6], [7, 8]])
-print(matrix_add(A, B))
+
+# Perform matrix multiplication
+C = np.dot(A, B)
+print(C) # Output: array([[19, 22], [43, 50]])
+
 
 # VERSION 3 #
 
 import numpy as np
 
-# Define a function for matrix transposition
-def matrix_transpose(A):
-    # Perform the matrix transposition using AXPY
-    B = np.zeros((A.shape[1], A.shape[0]))
-    np.axpy(B, A.T)
-    return B
+# Define two arrays with different shapes
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
 
-# Test the function with some sample matrices
-A = np.array([[1, 2], [3, 4]])
-print(matrix_transpose(A))
+# Perform element-wise multiplication
+c = np.multiply(a, b)
+print(c) # Output: array([4, 10, 18])
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
 
 # cuPy
 
-# Prompt: "Give me code for the following:
-# Python, cuPy, AXPY, def"
+# Prompt: "Create 3 code suggestions using the following parameters: Python cuPy AXPY def."
 
 # VERSION 1 #
 
-import cublas as cuda
-from cupy import zeros
+import cupy
+import numpy as np
 
-# Define a function for the matrix multiplication
-def matrix_mult(A, B):
-    # Move the inputs to the GPU
-    dA = cuda.to_device(A)
-    dB = cuda.to_device(B)
-    
-    # Allocate memory on the GPU for the result
-    dC = zeros((A.shape[0], B.shape[1]), dtype=float32)
-    
-    # Perform the matrix multiplication using AXPY
-    cuda.axpy(dC, dA, dB, alpha=1.0)
-    
-    # Move the result back to the CPU
-    C = dC.get()
-    
-    return C
+# Define a matrix and a vector
+A = cupy.eye(3)
+x = cupy.array([1, 2, 3])
 
-# Test the function with some sample matrices
-A = np.random.rand(2, 2)
-B = np.random.rand(2, 2)
-C = matrix_mult(A, B)
-print(C)
+# Perform a matrix-vector dot product using AXPY
+y = cupy.zeros((3,))
+cupy.axpy(A, x, y)
+
+print(y) # Output: array([2., 4., 6.])
+
 
 # VERSION 2 #
 
+import cupy
+import numpy as np
+
+# Define a batch of matrices and vectors
+A = cupy.stack((cupy.eye(3), cupy.eye(3)))
+x = cupy.stack((cupy.array([1, 2, 3]), cupy.array([4, 5, 6])))
+
+# Perform a batched matrix-vector dot product using AXPY
+y = cupy.zeros((2, 3))
+cupy.axpy(A, x, y)
+
+print(y) # Output: array([[2., 4., 6.],
+                       [7., 10., 13.]])
+
+
 # VERSION 3 #
 
+import cupy
+import numpy as np
+
+# Define a custom matrix-vector dot product function using AXPY
+def dot_product(A, x):
+    y = cupy.zeros((A.shape[0],))
+    cupy.axpy(A, x, y)
+    return y
+
+# Test the function
+A = cupy.eye(3)
+x = cupy.array([1, 2, 3])
+y = dot_product(A, x)
+print(y) # Output: array([2., 4., 6.])
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
 
 # pyCUDA
 
-# Prompt: "Give me code for the following:
-# Python, pyCUDA, AXPY, def"
+# Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA AXPY def."
 
 # VERSION 1 #
 
-import pycuda.driver as cuda
+import pycuda.driver as cudadrv
 from pycuda.compiler import SourceModule
 
-# Define a function for the matrix multiplication
-def matrix_mult(A, B):
-    # Create a module for the kernel
-    mod = SourceModule("""
-        __global__ void axpy(float *A, float *B, float *C, int N) {
-            int i = blockIdx.x * blockDim.x + threadIdx.x;
-            if (i < N) {
-                C[i] = A[i] * B[i];
-            }
+# Define a kernel for the vector-matrix multiplication
+mod = SourceModule("""
+__global__ void axpy(float **A, float **x, float **y, int N, int M) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < N) {
+        for (int j = 0; j < M; ++j) {
+            y[i][j] = A[i][j] * x[i][j];
         }
-    """)
+    }
+}
+ """)
 
-    # Load the module onto the device
-    func = mod.get_function("axpy")
+# Load the kernel into the GPU
+dev = cudadrv.Device()
+func = mod.get_function("axpy")
 
-    # Move the inputs to the device
-    dA = cuda.to_device(A)
-    dB = cuda.to_device(B)
+# Allocate memory on the GPU for the inputs and outputs
+A = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
+x = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
+y = cudadrv.to_device(numpy.zeros((10, 10)).astype(numpy.float32))
 
-    # Allocate memory on the device for the result
-    dC = cuda.malloc(A.size * sizeof(float))
+# Set the number of blocks and threads per block
+block_size = 16
+grid_size = (10 + block_size - 1) // block_size
 
-    # Launch the kernel
-    blocks = (A.size // 32) + 1
-    threads = 32
-    func(dA, dB, dC, A.size, blocks, threads)
+# Launch the kernel
+func(A, x, y, 10, 10, block_size, grid_size)
 
-    # Move the result back to the host
-    C = dC.get()
+# Synchronize the threads
+cudadrv.synchronize()
 
-    return C
+# Copy the result back to the CPU
+result = y.copy_to_host()
+print(result)
 
-# Test the function with some sample matrices
-A = np.random.rand(2, 2)
-B = np.random.rand(2, 2)
-C = matrix_mult(A, B)
-print(C)
 
 # VERSION 2 #
 
+import pycuda.driver as cudadrv
+from pycuda.compiler import SourceModule
+
+# Define a kernel for the matrix-vector multiplication
+mod = SourceModule("""
+__global__ void axpy(float **A, float **x, float **y, int N, int M) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < N) {
+        for (int j = 0; j < M; ++j) {
+            y[i][j] = A[i][j] * x[j];
+        }
+    }
+}
+ """)
+
+# Load the kernel into the GPU
+dev = cudadrv.Device()
+func = mod.get_function("axpy")
+
+# Allocate memory on the GPU for the inputs and outputs
+A = cudadrv.to_device(numpy.random.rand(10, 10).astype(numpy.float32))
+x = cudadrv.to_device(numpy.random.rand(10).astype(numpy.float32))
+y = cudadrv.to_device(numpy.zeros((10, 10)).astype(numpy.float32))
+
+# Set the number of blocks and threads per block
+block_size = 16
+grid_size = (10 + block_size - 1) // block_size
+
+# Launch the kernel
+func(A, x, y, 10, 10, block_size, grid_size)
+
+# Synchronize the threads
+cudadrv.synchronize()
+
+# Copy the result back to the CPU
+result = y.copy_to_host()
+print(result)
+
+
 # VERSION 3 #
+
+# ONLY 2 CODES WERE PROVIDED #
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
 
 # Numba
 
-# Prompt: "Give me code for the following:
-# Python, Numba, AXPY, def"
+# Prompt: "Create 3 code suggestions using the following parameters: Python Numba AXPY def."
 
 # VERSION 1 #
 
-import numpy as np
-from numba import jit, cuda
+import numba
 
-@jit(cuda)
-def matrix_mult(A, B):
-    # Perform axis-wise multiplication
-    C = cuda. Axpy(A, B, axis=1)
-    return C
+@numba.jit
+def axpy_loop(a, b, n):
+    for i in range(n):
+        a[i] += b[i]
 
-# Test the function with some sample matrices
-A = np.random.rand(2, 2)
-B = np.random.rand(2, 2)
-C = matrix_mult(A, B)
-print(C)
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+n = len(a)
+axpy_loop(a, b, n)
+print(a) # Output: array([5, 7, 9])
+
 
 # VERSION 2 #
 
+import numba
+import numpy as np
+from numba import cuda
+
+@numba.jit
+@cuda.jit
+def axpy_gpu(a, b, n):
+    dev = cuda.device()
+    a_dev = cuda.to_device(a, dev)
+    b_dev = cuda.to_device(b, dev)
+    c_dev = cuda.empty_like(a_dev)
+    @cuda.kernel
+    def kernel(i, j):
+        c_dev[i] = a_dev[i] + b_dev[j]
+    cuda.parallel.forall(range(n), kernel, block=128)
+    return c_dev.copy_to_host()
+
+a = np.random.rand(1000)
+b = np.random.rand(1000)
+n = 1000
+result = axpy_gpu(a, b, n)
+print(result)
+
+
 # VERSION 3 #
+
+import numba
+
+@numba.jit
+def axpy_numba(a, b, n):
+    return numba.axpy(a, b, n)
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+n = len(a)
+result = axpy_numba(a, b, n)
+print(result) # Output: array([5, 7, 9])
 
 
 
