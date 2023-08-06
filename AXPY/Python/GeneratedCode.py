@@ -21,7 +21,34 @@ print(matrix_mult(A, B))
 
 # VERSION 2 #
 
+import numpy as np
+
+# Define a function for matrix addition
+def matrix_add(A, B):
+    # Perform the matrix addition using AXPY
+    C = np.zeros((A.shape[0], A.shape[1]))
+    np.axpy(C, A + B)
+    return C
+
+# Test the function with some sample matrices
+A = np.array([[1, 2], [3, 4]])
+B = np.array([[5, 6], [7, 8]])
+print(matrix_add(A, B))
+
 # VERSION 3 #
+
+import numpy as np
+
+# Define a function for matrix transposition
+def matrix_transpose(A):
+    # Perform the matrix transposition using AXPY
+    B = np.zeros((A.shape[1], A.shape[0]))
+    np.axpy(B, A.T)
+    return B
+
+# Test the function with some sample matrices
+A = np.array([[1, 2], [3, 4]])
+print(matrix_transpose(A))
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------------
