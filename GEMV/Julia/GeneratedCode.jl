@@ -1,6 +1,6 @@
 # Threads
 
-# Prompt: "Create 3 code suggestions using the following parameters: Julia Threads general matrix-matrix multiply"
+# Prompt: "Create 3 code suggestions using the following parameters: Julia Threads general matrix-vector multiply"
 
 # SUGGESTION 1 #
 
@@ -16,7 +16,7 @@
 
 # CUDA
 
-# Prompt: "Create 3 code suggestions using the following parameters: Julia CUDA general matrix-matrix multiply"
+# Prompt: "Create 3 code suggestions using the following parameters: Julia CUDA general matrix-vector multiply"
 
 # SUGGESTION 1 #
 
@@ -32,7 +32,7 @@
 
 # AMDGPU
 
-# Prompt: "Create 3 code suggestions using the following parameters: Julia AMDGPU general matrix-matrix multiply"
+# Prompt: "Create 3 code suggestions using the following parameters: Julia AMDGPU general matrix-vector multiply"
 
 # SUGGESTION 1 #
 
@@ -48,7 +48,7 @@
 
 # KernelAbstractions
 
-# Prompt: "Create 3 code suggestions using the following parameters: Julia KernelAbstractions general matrix-matrix multiply"
+# Prompt: "Create 3 code suggestions using the following parameters: Julia KernelAbstractions general matrix-vector multiply"
 
 # SUGGESTION 1 #
 
