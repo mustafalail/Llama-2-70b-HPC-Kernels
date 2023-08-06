@@ -3,7 +3,7 @@
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python numpy general matrix-matrix multiply def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import numpy as np
 
@@ -11,7 +11,7 @@ def matrix_multiply(A, B):
     return np.dot(A, B)
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import numpy as np
 
@@ -19,7 +19,7 @@ def matrix_multiply(A, B):
     return np.lib.arraysetops.matmat(A, B)
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import numpy as np
 
@@ -37,7 +37,7 @@ def matrix_multiply(A, B):
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python cuPy general matrix-matrix multiply def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import cupy
 
@@ -45,7 +45,7 @@ def matrix_multiply(A, B):
     return cupy.mm(A, B)
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import cupy
 
@@ -53,7 +53,7 @@ def matrix_multiply(A, B):
     return cupy.mm(A, B, stride=1)
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import cupy
 
@@ -75,7 +75,7 @@ def matrix_multiply(A, B):
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA general matrix-matrix multiply def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import pycuda.autoinit
 from pycuda import driver
@@ -106,7 +106,7 @@ def matrix_multiply(A, B):
     return C
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import pycuda.autoinit
 from pycuda import driver
@@ -140,7 +140,7 @@ def matrix_multiply(A, B):
     return C
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import pycuda.autoinit
 from pycuda import driver
@@ -179,7 +179,7 @@ def matrix_multiply(A, B):
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python Numba general matrix-matrix multiply def."
 
-# SUGGESTION 1 #
+# SUGGESTION 1 # ----------------------------------
 
 import numba
 
@@ -198,7 +198,7 @@ def matrix_multiply(A, B):
     return C
 
 
-# SUGGESTION 2 #
+# SUGGESTION 2 # ----------------------------------
 
 import numba
 import numpy as np
@@ -218,7 +218,7 @@ def strided_matrix_multiply(A, B, stride_a, stride_b):
     return C
 
 
-# SUGGESTION 3 #
+# SUGGESTION 3 # ----------------------------------
 
 import numba
 import numpy as np
