@@ -456,13 +456,79 @@ void launchKernelShared(int m, int n, const float* A, const float* x, float* y) 
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA General matrix-vector multiply function."
 
+// NOTE: CUDA uses __global__ or kernel.
+
 // SUGGESTION 1 // ----------------------------------
+
+__global__ void matrixVectorMultiply(float* A, float* x, float* y, int m, int n) {
+  // Use shared memory to reduce global memory access
+  __shared__ float smem[32][32];
+  
+  // Compute row of A and x in parallel
+  int row = blockIdx.x;
+  int col = threadIdx.x;
+  float sum = 0;
+  for (int i = 0; i < n; i++) {
+    sum += A[row * n + i] * x[col + i * 32];
+  }
+  
+  // Store result in shared memory
+  smem[row][col] = sum;
+  
+  // Synchronize threads within a block
+  __syncthreads();
+  
+  // Write result from shared memory to global memory
+  if (threadIdx.x == 0) {
+    y[row * n + col] = smem[row][col];
+  }
+}
 
 
 // SUGGESTION 2 // ----------------------------------
 
+__global__ void matrixVectorMultiply(float* A, float* x, float* y, int m, int n) {
+  // Use register blocking to improve memory access patterns
+  register float rA[32];
+  register float rx[32];
+  
+  // Load A and x into registers
+  for (int i = 0; i < 32; i++) {
+    rA[i] = A[i];
+    rx[i] = x[i];
+  }
+  
+  // Compute dot product in parallel
+  int row = blockIdx.x;
+  int col = threadIdx.x;
+  float sum = 0;
+  for (int i = 0; i < n; i++) {
+    sum += rA[row * n + i] * rx[col + i * 32];
+  }
+  
+  // Store result in global memory
+  y[row * n + col] = sum;
+}
+
 
 // SUGGESTION 3 // ----------------------------------
+
+__global__ void matrixVectorMultiply(float* A, float* x, float* y, int m, int n) {
+  // Use strided access to optimize memory access patterns
+  float* Ap = A + blockIdx.x * n;
+  float* xp = x + threadIdx.x * 32;
+  
+  // Compute dot product in parallel
+  int row = blockIdx.x;
+  int col = threadIdx.x;
+  float sum = 0;
+  for (int i = 0; i < n; i++) {
+    sum += Ap[row * n + i] * xp[col + i * 32];
+  }
+  
+  // Store result in global memory
+  y[row * n + col] = sum;
+}
 
 
 
