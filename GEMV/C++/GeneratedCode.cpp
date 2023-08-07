@@ -1,4 +1,7 @@
-// OpenMP
+//===================================================================================================================
+//               OpenMP Programming Model
+//===================================================================================================================
+
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP General matrix-vector multiply function."
 
@@ -72,9 +75,10 @@ void matrixVectorMultiply(double* A, double* B, double* C, int m, int n) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+//===================================================================================================================
+//               OpenMP(offload) Programming Model
+//===================================================================================================================
 
-// OpenMP(offload)
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP(offload) General matrix-vector multiply function."
 
@@ -244,9 +248,10 @@ void matrixVectorMultiply(double* A, double* x, double* y, int m, int n) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+//===================================================================================================================
+//               OpenACC Programming Model
+//===================================================================================================================
 
-// OpenACC
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenACC General matrix-vector multiply function."
 
@@ -376,7 +381,9 @@ void matrixVectorMultiply(float *A, float *x, float *y, int m, int n) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+//===================================================================================================================
+//                HIP Programming Model
+//===================================================================================================================
 
 // HIP(Heterogeneous-Compute Interface for Portability)
 
@@ -450,9 +457,9 @@ void launchKernelShared(int m, int n, const float* A, const float* x, float* y) 
   hipLaunchKernelGGL(matrixVecMultiplyShared, dim3(blocksPerGrid), dim3(threadsPerBlock), 0, 0, A, x, y, m, n);
 }
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// CUDA
+//===================================================================================================================
+//               CUDA Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA General matrix-vector multiply function."
 
