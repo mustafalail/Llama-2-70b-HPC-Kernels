@@ -385,8 +385,6 @@ void matrixVectorMultiply(float *A, float *x, float *y, int m, int n) {
 //                HIP Programming Model
 //===================================================================================================================
 
-// HIP(Heterogeneous-Compute Interface for Portability)
-
 // Prompt: "Create 3 code suggestions using the following parameters: C++ HIP(Heterogeneous-Compute Interface for Portability) General matrix-vector multiply function."
 
 // SUGGESTION 1 // ----------------------------------
