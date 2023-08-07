@@ -1,5 +1,6 @@
-
-# numpy
+# ===================================================================================================================
+#               numpy Programming Model
+# ===================================================================================================================
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python numpy general matrix-vector multiply def."
 
@@ -62,9 +63,9 @@ def matrix_vector_multiply(matrix, vector):
     """
     return np.dot(matrix, vector)
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# cuPy
+# ===================================================================================================================
+#               cuPy Programming Model
+# ===================================================================================================================
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python cuPy general matrix-vector multiply def."
 
@@ -141,9 +142,9 @@ def strided_cuppy_matrix_vector_multiply(A, b, stride=1):
     # Perform strided matrix-vector multiplication
     return cupy.matmul(A_strided, b)
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# pyCUDA
+# ===================================================================================================================
+#               pyCUDA Programming Model
+# ===================================================================================================================
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python pyCUDA general matrix-vector multiply def."
 
@@ -290,9 +291,9 @@ cudadrv.synchronize()
 # Copy result back to host
 C = dC.copy_to_host()
 
-# ------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Numba
+# ===================================================================================================================
+#               Numba Programming Model
+# ===================================================================================================================
 
 # Prompt: "Create 3 code suggestions using the following parameters: Python Numba general matrix-vector multiply def."
 
