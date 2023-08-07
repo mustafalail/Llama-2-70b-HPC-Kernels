@@ -1,4 +1,6 @@
-// OpenMP
+//===================================================================================================================
+//               OpenMP Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP General matrix-matrix multiply function."
 
@@ -107,9 +109,9 @@ void matrixMultiply(double** A, double** B, double** C, int m, int n, int p) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// OpenMP(offload)
+//===================================================================================================================
+//               OpenMP(offload) Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenMP(offload) General matrix-matrix multiply function."
 
@@ -228,9 +230,9 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// OpenACC
+//===================================================================================================================
+//               OpenACC Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ OpenACC General matrix-matrix multiply function."
 
@@ -319,9 +321,9 @@ void matrixMultiply(double* A, double* B, double* C, int m, int n, int p) {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// HIP(Heterogeneous-Compute Interface for Portability)
+//===================================================================================================================
+//               HIP Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ HIP(Heterogeneous-Compute Interface for Portability) General matrix-matrix multiply function."
 
@@ -464,9 +466,9 @@ int main() {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// CUDA
+//===================================================================================================================
+//               CUDA Programming Model
+//===================================================================================================================
 
 // Prompt: "Create 3 code suggestions using the following parameters: C++ CUDA General matrix-matrix multiply function."
 
