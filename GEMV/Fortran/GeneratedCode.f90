@@ -1,4 +1,6 @@
-! OpenMP
+!===================================================================================================================
+!               OpenMP Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP General matrix-vector multiply subroutine."
 
@@ -54,9 +56,9 @@ END SUBROUTINE matrix_vector_multiply
 
 
 
-! ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-! OpenMP(offload)
+!===================================================================================================================
+!               OpenMP(offload) Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP(offload) General matrix-vector multiply subroutine."
 
@@ -120,9 +122,9 @@ END SUBROUTINE matrix_vector_multiply
 
 
 
-! ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-! OpenACC
+!===================================================================================================================
+!               OpenACC Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenACC General matrix-vector multiply subroutine."
 
