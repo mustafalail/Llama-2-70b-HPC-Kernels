@@ -1,4 +1,6 @@
-! OpenMP
+!===================================================================================================================
+!               OpenMP Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP general matrix-matrix multiply subroutine."
 
@@ -73,9 +75,9 @@ end subroutine matrix_multiply
 
 
 
-! ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-! OpenMP(offload)
+!===================================================================================================================
+!               OpenMP(offload) Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenMP(offload) general matrix-matrix multiply subroutine."
 
@@ -209,9 +211,9 @@ END SUBROUTINE matrix_multiply_strided
 
 
 
-! ---------------------------------------------------------------------------------------------------------------------------------------------------------
-
-! OpenACC
+!===================================================================================================================
+!               OpenACC Programming Model
+!===================================================================================================================
 
 ! Prompt: "Create 3 code suggestions using the following parameters: Fortran OpenACC general matrix-matrix multiply subroutine."
 
